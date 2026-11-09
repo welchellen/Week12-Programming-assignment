@@ -1,0 +1,163 @@
+"use strict";
+
+function validateName(name) {
+    const namepattern= /^[a-zA-Z ]{2,}$/;
+    return namepattern.test(name)
+}
+    function validateUsername(username) {
+const usernamePattern= /^\w{3,12}$/;
+return usernamePattern.test(username)
+}
+    function validatePhone(phone) {
+const phonePattern= /^\d{3}[-.]?\d{3}[-.]?\d{4}$/;
+return phonePattern.test(phone)
+}
+    function validatePromoCode(promoCode) {
+    const promoPattern=/^SUMMER$/i;
+    return promoPattern.test(promoCode)
+    }
+function formatPhoneNumber(phone) {
+  const phonePattern= /^(\d{3})[-.]?(\d{3})[-.]?(\d{4})?/;
+  if (typeof phone ==! "string" || !phonePattern.test(phone)){
+    return null;
+  }
+  return phone.replace(phonePattern, "($1, $2-$3)");
+  
+}
+function processRegistration(user) {
+  const errors= [];
+  if (!validateName(user.name)) {
+    errors.push("Invalid name");
+}
+
+if (!validateUsername(user.username)) {
+    errors.push("Invalid username");
+}
+
+const formattedPhone = formatPhoneNumber(user.phone);
+
+if (formattedPhone === null) {
+    errors.push("Invalid phone");
+}
+if (errors.length > 0) {
+    return {
+        success: false,
+        errors: errors
+    };
+}
+return {
+    success: true,
+    data: {
+        name: user.name,
+        username: user.username,
+        phone: formattedPhone,
+        discountApplied: validatePromoCode(user.promoCode)
+    }
+};
+
+
+  
+}
+
+const sampleUsers = [
+  {
+    name: "Alex Johnson",
+    username: "alex_j",
+    phone: "555-234-5678",
+    promoCode: "SUMMER"
+  },
+  {
+    name: "B", // Invalid name (too short)
+    username: "cool_user_123",
+    phone: "555.345.6789",
+    promoCode: "summer"
+  },
+  {
+    name: "Charlie Brown",
+    username: "charlie!brown", // Invalid username (illegal character '!')
+    phone: "5554567890",
+    promoCode: "SUMMER2026" // Invalid promo code
+  },
+  {
+    name: "Dana Scully",
+    username: "da", // Invalid username (too short, min 3)
+    phone: "555-567-8901",
+    promoCode: "SuMmEr"
+  },
+  {
+    name: "Edward Nygma",
+    username: "the_riddler_super_fan", // Invalid username (too long, max 12)
+    phone: "555-678-901", // Invalid phone (missing a digit)
+    promoCode: null
+  },
+  {
+    name: "Fiona Gallagher",
+    username: "fiona_g",
+    phone: "555-789-0123",
+    promoCode: "" // No promo code provided
+
+
+
+
+  }]
+  const edgeCaseUsers = [
+    {
+        name: "John Smith",
+        username: "john@123",
+        phone: "555-123-4567",
+        promoCode: "SUMMER"
+    },
+    {
+        name: "Jane Doe",
+        username: "jane123",
+        phone: "555 123 4567",
+        promoCode: "summer"
+    },
+    {
+        name: "Amy Lee",
+        username: "abc",
+        phone: "5551234567",
+        promoCode: null
+    },
+    {
+        name: "Sam Wilson",
+        username: "abcdefghijkl",
+        phone: "555.123.4567",
+        promoCode: "SUMMER"
+    },
+    {
+        name: "Mary Jones",
+        username: "abcdefghijklm",
+        phone: "5551234567",
+        promoCode: ""
+    }
+];
+sampleUsers.forEach(function(user) {
+    console.log("Fiona Gallagher:", "fiona_g");
+    console.log("Valid Name:", validateName(user.name));
+
+    console.log("Username:", user.username);
+    console.log("Valid Username:", validateUsername(user.username));
+
+    console.log(formatPhoneNumber(user.phone));
+
+});
+
+
+const allUsers = sampleUsers.concat(edgeCaseUsers);
+
+allUsers.forEach(function(user) {
+    const result = processRegistration(user);
+
+    console.log("Testing:", user.name);
+
+    if (result.success) {
+        console.log("Registration Successful!");
+        console.log(result.data);
+    } else {
+        console.log("Registration Failed!");
+        console.log("Errors:", result.errors);
+    }
+
+    console.log("-----------------------");
+});
